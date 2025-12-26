@@ -6,6 +6,7 @@ import 'flag-icons/css/flag-icons.min.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import i18n from './locales'
+import router from './router'
 
 // FontAwesome
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -16,5 +17,6 @@ library.add(faFlag)
 
 const app = createApp(App)
 app.use(i18n)
+app.use(router)
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.mount('#app')
