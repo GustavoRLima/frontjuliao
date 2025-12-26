@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Círculo de fundo -->
+  <circle cx="100" cy="100" r="90" fill="url(#logoGradient)"/>
+  
+  <!-- Troféu -->
+  <g transform="translate(100, 100)">
+    <!-- Base do troféu -->
+    <rect x="-30" y="50" width="60" height="10" fill="#FFD700" rx="2"/>
+    <rect x="-20" y="40" width="40" height="15" fill="#FFD700" rx="2"/>
+    
+    <!-- Corpo do troféu -->
+    <path d="M -25,-40 L -30,-10 L -20,30 L 20,30 L 30,-10 L 25,-40 Z" fill="#FFD700"/>
+    
+    <!-- Alças -->
+    <path d="M -25,-30 Q -45,-30 -45,-15 Q -45,0 -30,0" fill="none" stroke="#FFD700" stroke-width="4"/>
+    <path d="M 25,-30 Q 45,-30 45,-15 Q 45,0 30,0" fill="none" stroke="#FFD700" stroke-width="4"/>
+    
+    <!-- Estrela no topo -->
+    <path d="M 0,-50 L 3,-42 L 11,-42 L 5,-36 L 8,-28 L 0,-34 L -8,-28 L -5,-36 L -11,-42 L -3,-42 Z" fill="#FFF"/>
+  </g>
+</svg>
+
