@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import NavBar from './components/NavBar.vue'
-import Welcome from './views/Welcome.vue'
 import Footer from './components/Footer.vue'
 </script>
 
@@ -9,7 +8,7 @@ import Footer from './components/Footer.vue'
     <NavBar />
     
     <main class="flex-grow-1">
-      <Welcome />
+      <router-view />
     </main>
     
     <Footer />
