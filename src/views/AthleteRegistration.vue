@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
 import DynamicAutocomplete from '../components/DynamicAutocomplete.vue'
+import { API_ENDPOINTS } from '../config/api'
 
 const { t } = useI18n()
+const router = useRouter()
 
 interface Academy {
   id: number | string
@@ -11,26 +15,29 @@ interface Academy {
 }
 
 const formData = reactive({
-  name: '',
+  nome: '',
   email: '',
-  documentType: '',
-  document: '',
+  tipo_doc: '',
+  documento: '',
   login: '',
-  password: '',
+  senha: '',
   confirmPassword: '',
-  birthDate: '',
-  gender: '',
-  phone: '',
+  data_nascimento: '',
+  sexo: '',
+  ddi: "+55",
+  telefone: '',
   cep: '',
-  street: '',
-  number: '',
-  neighborhood: '',
-  city: '',
-  state: '',
-  country: 'Brasil',
-  type: 'ALUNO',
-  teacher: '',
-  academy: null as Academy | null
+  rua: '',
+  numero: '',
+  bairro: '',
+  cidade: '',
+  estado: '',
+  pais: 'Brasil',
+  tipo: '1',
+  professor_nome: '',
+  faixa: '',
+  peso: '',
+  equipe_id: null as Academy | null
 })
 
 const photoFile = ref<File | null>(null)
@@ -43,19 +50,21 @@ const formatPhone = (event: Event) => {
   const input = event.target as HTMLInputElement
   let value = input.value.replace(/\D/g, '')
 
-  if (value.length <= 11) {
-    if (value.length <= 2) {
-      value = value.replace(/^(\d{0,2})/, '($1')
-    } else if (value.length <= 6) {
-      value = value.replace(/^(\d{2})(\d{0,4})/, '($1) $2')
-    } else if (value.length <= 10) {
-      value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3')
-    } else {
-      value = value.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3')
+  if(formData.ddi === "+55") {
+    if (value.length <= 11) {
+      if (value.length <= 2) {
+        value = value.replace(/^(\d{0,2})/, '($1')
+      } else if (value.length <= 6) {
+        value = value.replace(/^(\d{2})(\d{0,4})/, '($1) $2')
+      } else if (value.length <= 10) {
+        value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3')
+      } else {
+        value = value.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3')
+      }
     }
   }
 
-  formData.phone = value
+  formData.telefone = value
 }
 
 // Formatação de CEP
@@ -81,16 +90,26 @@ const fetchAddressByCep = async () => {
     const data = await response.json()
 
     if (!data.erro) {
-      formData.street = data.logradouro || ''
-      formData.neighborhood = data.bairro || ''
-      formData.city = data.localidade || ''
-      formData.state = data.uf || ''
+      formData.rua = data.logradouro || ''
+      formData.bairro = data.bairro || ''
+      formData.cidade = data.localidade || ''
+      formData.estado = data.uf || ''
     } else {
-      alert('CEP não encontrado')
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'CEP não encontrado',
+        confirmButtonColor: '#198754'
+      })
     }
   } catch (error) {
     console.error('Erro ao buscar CEP:', error)
-    alert('Erro ao buscar CEP. Por favor, tente novamente.')
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Erro ao buscar CEP. Por favor, tente novamente.',
+      confirmButtonColor: '#198754'
+    })
   }
 }
 
@@ -122,8 +141,13 @@ const handleGraduationDocUpload = (event: Event) => {
 
 // Submit do formulário
 const handleSubmit = () => {
-  if (formData.password !== formData.confirmPassword) {
-    alert(t('athlete.passwordMismatch'))
+  if (formData.senha !== formData.confirmPassword) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Atenção',
+      text: t('athlete.passwordMismatch'),
+      confirmButtonColor: '#198754'
+    })
     return
   }
 
@@ -132,31 +156,78 @@ const handleSubmit = () => {
   // Adicionar todos os campos do formulário
   Object.keys(formData).forEach((key) => {
     const value = formData[key as keyof typeof formData]
-    if (value !== null && value !== undefined) {
-      if (key === 'academy' && value && typeof value === 'object') {
-        submitData.append('academy_id', String(value.id))
-      } else if (typeof value === 'string') {
-        submitData.append(key, value)
+    if (value !== null && value !== undefined && key !== 'confirmPassword') {
+      if (key === 'equipe_id' && value && typeof value === 'object') {
+        submitData.append('equipe_id', String(value.id))
+      } else if (typeof value === 'string' || typeof value === 'number') {
+        submitData.append(key, String(value))
       }
     }
   })
 
   // Adicionar arquivos
   if (photoFile.value) {
-    submitData.append('photo', photoFile.value)
+    submitData.append('foto_3_4', photoFile.value)
   }
   if (graduationDocFile.value) {
-    submitData.append('graduation_doc', graduationDocFile.value)
+    submitData.append('documento_graduacao', graduationDocFile.value)
   }
 
   console.log('Dados do formulário:', Object.fromEntries(submitData))
-  alert(t('athlete.successMessage'))
 
-  // Aqui você faria a chamada para a API
-  // fetch('http://juliao.localhost/api/register-athlete', {
-  //   method: 'POST',
-  //   body: submitData
-  // })
+  // Chamada para a API
+  fetch(API_ENDPOINTS.registerAthlete, {
+    method: 'POST',
+    body: submitData
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Resposta da API:', data)
+      
+      // Verificar se a resposta foi bem-sucedida
+      if (data.success === true) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Sucesso!',
+          text: t('athlete.successMessage'),
+          confirmButtonColor: '#198754'
+        }).then(() => {
+          // Redirecionar para a página inicial após fechar o modal
+          router.push('/')
+        })
+      } else {
+        // Tratar erros de validação
+        let errorMessage = data.message || 'Erro ao realizar cadastro.'
+        
+        // Se houver erros específicos de campos, formatá-los
+        if (data.errors) {
+          const errorsList = Object.entries(data.errors)
+            .map(([field, messages]) => {
+              const fieldMessages = Array.isArray(messages) ? messages : [messages]
+              return fieldMessages.join(', ')
+            })
+            .join('\n')
+          
+          errorMessage = `${errorMessage}\n\n${errorsList}`
+        }
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro de Validação',
+          text: errorMessage,
+          confirmButtonColor: '#198754'
+        })
+      }
+    })
+    .catch(error => {
+      console.error('Erro ao enviar cadastro:', error)
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Erro ao realizar cadastro. Por favor, tente novamente.',
+        confirmButtonColor: '#198754'
+      })
+    })
 }
 
 // Resetar formulário
@@ -169,7 +240,9 @@ const resetForm = () => {
       formData[typedKey] = null as any
     }
   })
-  formData.country = 'Brasil'
+  formData.pais = 'Brasil'
+  formData.ddi = '+55'
+  formData.tipo = '1'
   photoFile.value = null
   photoPreview.value = ''
   graduationDocFile.value = null
@@ -195,7 +268,7 @@ const resetForm = () => {
                   <div class="col-md-6 mb-3">
                     <label for="name" class="form-label">{{ t('athlete.name') }} <span
                         class="text-danger">*</span></label>
-                    <input id="name" v-model="formData.name" type="text" class="form-control" required />
+                    <input id="name" v-model="formData.nome" type="text" class="form-control" required />
                   </div>
 
                   <div class="col-md-6 mb-3">
@@ -209,24 +282,24 @@ const resetForm = () => {
                   <div class="col-md-4 mb-3">
                     <label for="documentType" class="form-label">{{ t('athlete.documentType') }} <span
                         class="text-danger">*</span></label>
-                    <select id="documentType" v-model="formData.documentType" class="form-select" required>
+                    <select id="documentType" v-model="formData.tipo_doc" class="form-select" required>
                       <option value="">{{ t('athlete.selectOption') }}</option>
-                      <option value="CPF">CPF</option>
-                      <option value="RG">RG</option>
-                      <option value="OUTRO">{{ t('athlete.other') }}</option>
+                      <option value="1">CPF</option>
+                      <option value="2">RG</option>
+                      <option value="3">{{ t('athlete.other') }}</option>
                     </select>
                   </div>
 
                   <div class="col-md-4 mb-3">
                     <label for="document" class="form-label">{{ t('athlete.document') }} <span
                         class="text-danger">*</span></label>
-                    <input id="document" v-model="formData.document" type="text" class="form-control" required />
+                    <input id="document" v-model="formData.documento" type="text" class="form-control" required />
                   </div>
 
                   <div class="col-md-4 mb-3">
                     <label for="birthDate" class="form-label">{{ t('athlete.birthDate') }} <span
                         class="text-danger">*</span></label>
-                    <input id="birthDate" v-model="formData.birthDate" type="date" class="form-control" required />
+                    <input id="birthDate" v-model="formData.data_nascimento" type="date" class="form-control" required />
                   </div>
                 </div>
 
@@ -234,17 +307,23 @@ const resetForm = () => {
                   <div class="col-md-6 mb-3">
                     <label for="gender" class="form-label">{{ t('athlete.gender') }} <span
                         class="text-danger">*</span></label>
-                    <select id="gender" v-model="formData.gender" class="form-select" required>
+                    <select id="gender" v-model="formData.sexo" class="form-select" required>
                       <option value="">{{ t('athlete.selectOption') }}</option>
-                      <option value="M">{{ t('athlete.male') }}</option>
-                      <option value="F">{{ t('athlete.female') }}</option>
+                      <option value="1">{{ t('athlete.male') }}</option>
+                      <option value="2">{{ t('athlete.female') }}</option>
                     </select>
                   </div>
 
-                  <div class="col-md-6 mb-3">
+                  <div class="col-md-2 mb-3">
+                    <label for="ddi" class="form-label">DDI <span
+                        class="text-danger">*</span></label>
+                    <input id="ddi" v-model="formData.ddi" type="text" class="form-control" maxlength="4" required />
+                  </div>
+
+                  <div class="col-md-4 mb-3">
                     <label for="phone" class="form-label">{{ t('athlete.phone') }} <span
                         class="text-danger">*</span></label>
-                    <input id="phone" v-model="formData.phone" type="text" class="form-control" @input="formatPhone"
+                    <input id="phone" v-model="formData.telefone" type="text" class="form-control" @input="formatPhone"
                       placeholder="(00) 00000-0000" maxlength="15" required />
                   </div>
                 </div>
@@ -262,16 +341,16 @@ const resetForm = () => {
                   <div class="col-md-4 mb-3">
                     <label for="password" class="form-label">{{ t('athlete.password') }} <span
                         class="text-danger">*</span></label>
-                    <input id="password" v-model="formData.password" type="password" class="form-control" required />
+                    <input id="password" v-model="formData.senha" type="password" class="form-control" required />
                   </div>
 
                   <div class="col-md-4 mb-3">
                     <label for="confirmPassword" class="form-label">{{ t('athlete.confirmPassword') }} <span
                         class="text-danger">*</span></label>
                     <input id="confirmPassword" v-model="formData.confirmPassword" type="password" class="form-control"
-                      :class="{ 'is-invalid': formData.confirmPassword && formData.password !== formData.confirmPassword }"
+                      :class="{ 'is-invalid': formData.confirmPassword && formData.senha !== formData.confirmPassword }"
                       required />
-                    <div v-if="formData.confirmPassword && formData.password !== formData.confirmPassword"
+                    <div v-if="formData.confirmPassword && formData.senha !== formData.confirmPassword"
                       class="invalid-feedback">
                       {{ t('athlete.passwordMismatch') }}
                     </div>
@@ -292,13 +371,13 @@ const resetForm = () => {
                   <div class="col-md-7 mb-3">
                     <label for="street" class="form-label">{{ t('athlete.street') }} <span
                         class="text-danger">*</span></label>
-                    <input id="street" v-model="formData.street" type="text" class="form-control" required />
+                    <input id="street" v-model="formData.rua" type="text" class="form-control" required />
                   </div>
 
                   <div class="col-md-2 mb-3">
                     <label for="number" class="form-label">{{ t('athlete.number') }} <span
                         class="text-danger">*</span></label>
-                    <input id="number" v-model="formData.number" type="text" class="form-control" required />
+                    <input id="number" v-model="formData.numero" type="text" class="form-control" required />
                   </div>
                 </div>
 
@@ -306,27 +385,27 @@ const resetForm = () => {
                   <div class="col-md-4 mb-3">
                     <label for="neighborhood" class="form-label">{{ t('athlete.neighborhood') }} <span
                         class="text-danger">*</span></label>
-                    <input id="neighborhood" v-model="formData.neighborhood" type="text" class="form-control"
+                    <input id="neighborhood" v-model="formData.bairro" type="text" class="form-control"
                       required />
                   </div>
 
                   <div class="col-md-4 mb-3">
                     <label for="city" class="form-label">{{ t('athlete.city') }} <span
                         class="text-danger">*</span></label>
-                    <input id="city" v-model="formData.city" type="text" class="form-control" required />
+                    <input id="city" v-model="formData.cidade" type="text" class="form-control" required />
                   </div>
 
                   <div class="col-md-2 mb-3">
                     <label for="state" class="form-label">{{ t('athlete.state') }} <span
                         class="text-danger">*</span></label>
-                    <input id="state" v-model="formData.state" type="text" class="form-control" maxlength="2"
+                    <input id="state" v-model="formData.estado" type="text" class="form-control" maxlength="2"
                       required />
                   </div>
 
                   <div class="col-md-2 mb-3">
                     <label for="country" class="form-label">{{ t('athlete.country') }} <span
                         class="text-danger">*</span></label>
-                    <input id="country" v-model="formData.country" type="text" class="form-control" required />
+                    <input id="country" v-model="formData.pais" type="text" class="form-control" required />
                   </div>
                 </div>
 
@@ -337,25 +416,48 @@ const resetForm = () => {
                   <div class="col-md-6 mb-3">
                     <label for="type" class="form-label">{{ t('athlete.type') }} <span
                         class="text-danger">*</span></label>
-                    <select id="type" v-model="formData.type" class="form-select" required>
+                    <select id="type" v-model="formData.tipo" class="form-select" required>
                       <option value="">{{ t('athlete.selectOption') }}</option>
-                      <option value="ALUNO">{{ t('athlete.student') }}</option>
-                      <option value="PROFESSOR">{{ t('athlete.teacher') }}</option>
+                      <option value="1">{{ t('athlete.student') }}</option>
+                      <option value="2">{{ t('athlete.teacher') }}</option>
                     </select>
                   </div>
 
-                  <div v-if="formData.type === 'ALUNO'" class="col-md-6 mb-3">
+                  <div v-if="formData.tipo === '1'" class="col-md-6 mb-3">
                     <label for="teacher" class="form-label">{{ t('athlete.teacherName') }} <span
                         class="text-danger">*</span></label>
-                    <input id="teacher" v-model="formData.teacher" type="text" class="form-control"
-                      :required="formData.type === 'ALUNO'" />
+                    <input id="teacher" v-model="formData.professor_nome" type="text" class="form-control"
+                      :required="formData.tipo === '1'" />
                   </div>
                 </div>
 
                 <div class="row">
-                  <div class="col-12 mb-3">
+                  <div class="col-6 mb-3">
                     <DynamicAutocomplete :label="t('athlete.academy') + ' *'" :placeholder="t('athlete.searchAcademy')"
-                      api-url="http://juliao.localhost/api/get-equipes" v-model="formData.academy" input-id="academy" />
+                      :api-url="API_ENDPOINTS.getEquipes" v-model="formData.equipe_id" input-id="academy" />
+                  </div>
+
+                  <div class="col-md-3 mb-3">
+                    <label for="faixa" class="form-label">{{ t('athlete.faixa') }} <span
+                        class="text-danger">*</span></label>
+                    <select id="faixa" v-model="formData.faixa" class="form-select" required>
+                      <option value="">{{ t('athlete.selectFaixa') }}</option>
+                      <option value="branca">{{ t('athlete.faixa1') }}</option>
+                      <option value="cinza">{{ t('athlete.faixa2') }}</option>
+                      <option value="amarela">{{ t('athlete.faixa3') }}</option>
+                      <option value="laranja">{{ t('athlete.faixa4') }}</option>
+                      <option value="verde">{{ t('athlete.faixa5') }}</option>
+                      <option value="azul">{{ t('athlete.faixa6') }}</option>
+                      <option value="roxa">{{ t('athlete.faixa7') }}</option>
+                      <option value="marrom">{{ t('athlete.faixa8') }}</option>
+                      <option value="preta">{{ t('athlete.faixa9') }}</option>
+                    </select>
+                  </div>
+                  
+                  <div class="col-md-3 mb-3">
+                    <label for="peso" class="form-label">{{ t('athlete.peso') }} <span
+                        class="text-danger">*</span></label>
+                    <input id="peso" v-model="formData.peso" type="number" step="0.01" class="form-control"/>
                   </div>
                 </div>
 

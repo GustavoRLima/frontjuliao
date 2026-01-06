@@ -66,7 +66,19 @@ export default {
     graduationDocHint: 'قم بتحميل الشهادة أو وثيقة التخرج',
     cancel: 'إلغاء',
     submit: 'تسجيل',
-    successMessage: 'تم التسجيل بنجاح!'
+    successMessage: 'تم التسجيل بنجاح!',
+    faixa: 'حزام',
+    selectFaixa: 'اختر الحزام',
+    peso: 'الوزن (كجم)',
+    faixa1: "أبيض",
+    faixa2: "رمادي",  
+    faixa3: "أصفر",
+    faixa4: "برتقالي",
+    faixa5: "أخضر",
+    faixa6: "أزرق",
+    faixa7: "بنفسجي",
+    faixa8: "بني",
+    faixa9: "أسود"
   },
   footer: {
     copyright: 'Copyright © 2022 CBJJI. جميع الحقوق محفوظة.',
