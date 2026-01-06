@@ -66,7 +66,19 @@ export default {
     graduationDocHint: 'Carica il certificato o documento di graduazione',
     cancel: 'Annulla',
     submit: 'Registrati',
-    successMessage: 'Registrazione completata con successo!'
+    successMessage: 'Registrazione completata con successo!',
+    faixa: 'Cintura',
+    selectFaixa: 'Seleziona la cintura',
+    peso: 'Peso (kg)',
+    faixa1: "Bianca",
+    faixa2: "Grigia",  
+    faixa3: "Gialla",
+    faixa4: "Arancione",
+    faixa5: "Verde",
+    faixa6: "Blu",
+    faixa7: "Viola",
+    faixa8: "Marrone",
+    faixa9: "Nera"
   },
   footer: {
     copyright: 'Copyright © 2022 CBJJI. Tutti i diritti riservati.',

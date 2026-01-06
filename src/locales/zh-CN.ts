@@ -66,7 +66,19 @@ export default {
     graduationDocHint: '上传证书或毕业文件',
     cancel: '取消',
     submit: '注册',
-    successMessage: '注册成功！'
+    successMessage: '注册成功！',
+    faixa: '腰带',
+    selectFaixa: '选择腰带',
+    peso: '体重 (kg)',
+    faixa1: "白带",
+    faixa2: "灰带",  
+    faixa3: "黄带",
+    faixa4: "橙带",
+    faixa5: "绿带",
+    faixa6: "蓝带",
+    faixa7: "紫带",
+    faixa8: "棕带",
+    faixa9: "黑带"
   },
   footer: {
     copyright: 'Copyright © 2022 CBJJI. 保留所有权利。',

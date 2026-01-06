@@ -66,7 +66,19 @@ export default {
     graduationDocHint: 'Laden Sie das Zertifikat oder Graduierungsdokument hoch',
     cancel: 'Abbrechen',
     submit: 'Registrieren',
-    successMessage: 'Registrierung erfolgreich abgeschlossen!'
+    successMessage: 'Registrierung erfolgreich abgeschlossen!',
+    faixa: 'Gürtel',
+    selectFaixa: 'Wählen Sie den Gürtel',
+    peso: 'Gewicht (kg)',
+    faixa1: "Weiß",
+    faixa2: "Grau",  
+    faixa3: "Gelb",
+    faixa4: "Orange",
+    faixa5: "Grün",
+    faixa6: "Blau",
+    faixa7: "Lila",
+    faixa8: "Braun",
+    faixa9: "Schwarz"
   },
   footer: {
     copyright: 'Copyright © 2022 CBJJI. Alle Rechte vorbehalten.',
