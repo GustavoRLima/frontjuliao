@@ -72,7 +72,7 @@ const carouselItems = [
               <div class="card-body text-center">
                 <h4 class="card-title">{{ t('welcome.teamTitle') }}</h4>
                 <p class="card-text"></p>
-                <a href="#equipe" class="btn btn-success btn-lg">{{ t('welcome.registerButton') }}</a>
+                <router-link to="/equipe" class="btn btn-success btn-lg">{{ t('welcome.registerButton') }}</router-link>
               </div>
             </div>
           </div>

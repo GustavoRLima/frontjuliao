@@ -10,6 +10,7 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://sistema
 // Endpoints da API
 export const API_ENDPOINTS = {
   registerAthlete: `${API_BASE_URL}/api/register-competidor`,
+  registerTeam: `${API_BASE_URL}/api/register-equipe`,
   getEquipes: `${API_BASE_URL}/api/get-equipes`,
   // Adicione outros endpoints aqui conforme necessário
 }

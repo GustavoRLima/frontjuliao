@@ -46,25 +46,12 @@ const changeLanguage = (langCode: string) => {
         <!-- Menus -->
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">{{ t('nav.home') }}</a>
+            <router-link class="nav-link" active-class="active" exact to="/">{{ t('nav.home') }}</router-link>
           </li>
           
-          <!-- Dropdown Login -->
-          <li class="nav-item dropdown">
-            <a 
-              class="nav-link dropdown-toggle" 
-              href="#" 
-              id="loginDropdown" 
-              role="button"
-              data-bs-toggle="dropdown" 
-              aria-expanded="false"
-            >
-              {{ t('nav.login') }}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="loginDropdown">
-              <li><a class="dropdown-item" href="#atleta">{{ t('nav.athlete') }}</a></li>
-              <li><a class="dropdown-item" href="#equipe">{{ t('nav.team') }}</a></li>
-            </ul>
+          <!-- Login Link -->
+          <li class="nav-item">
+            <router-link class="nav-link" active-class="active" to="/login">{{ t('nav.login') }}</router-link>
           </li>
           
           <li class="nav-item">

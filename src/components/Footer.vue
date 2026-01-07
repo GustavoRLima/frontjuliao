@@ -5,7 +5,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <footer class="footer bg-black text-white py-4 mt-5">
+  <footer class="footer bg-black text-white py-4 ">
     <div class="container-fluid px-4">
       <div class="row align-items-center">
         <div class="col-md-6 text-center text-md-start">
@@ -25,7 +25,6 @@ const { t } = useI18n()
 
 <style scoped>
 .footer {
-  margin-top: auto;
   background-color: #000 !important;
   border-top: 3px solid #28a745;
 }
