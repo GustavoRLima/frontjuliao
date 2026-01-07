@@ -193,7 +193,7 @@ const handleSubmit = () => {
           confirmButtonColor: '#198754'
         }).then(() => {
           // Redirecionar para a página inicial após fechar o modal
-          router.push('/')
+          router.push('/login')
         })
       } else {
         // Tratar erros de validação
