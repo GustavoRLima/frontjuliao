@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { useAuthStore } from '@/stores/auth'
+import UserDropdown from '@/components/UserDropdown.vue'
 
 const { locale, t } = useI18n()
+const authStore = useAuthStore()
 
 const languages = [
   { code: 'pt-BR', name: 'Português', flagCode: 'br' },
@@ -49,8 +52,8 @@ const changeLanguage = (langCode: string) => {
             <router-link class="nav-link" active-class="active" exact to="/">{{ t('nav.home') }}</router-link>
           </li>
           
-          <!-- Login Link -->
-          <li class="nav-item">
+          <!-- Login Link - Só mostra se não estiver autenticado -->
+          <li class="nav-item" v-if="!authStore.isAuthenticated">
             <router-link class="nav-link" active-class="active" to="/login">{{ t('nav.login') }}</router-link>
           </li>
           
@@ -63,23 +66,27 @@ const changeLanguage = (langCode: string) => {
           </li>
         </ul>
 
-        <!-- Seletor de Idiomas com Bandeiras -->
-        <div class="d-flex align-items-center language-selector">
-          <button 
-            v-for="lang in languages" 
-            :key="lang.code"
-            @click="changeLanguage(lang.code)"
-            :class="['btn btn-link language-flag', { active: locale === lang.code }]"
-            :title="lang.name"
-          >
-            <span :class="`fi fi-${lang.flagCode}`"></span>
-          </button>
+        <!-- User Dropdown e Seletor de Idiomas -->
+        <div class="d-flex align-items-center gap-3">
+          <!-- User Dropdown -->
+          <UserDropdown v-if="authStore.isAuthenticated" />
+          
+          <!-- Seletor de Idiomas com Bandeiras -->
+          <div class="d-flex align-items-center language-selector">
+            <button 
+              v-for="lang in languages" 
+              :key="lang.code"
+              @click="changeLanguage(lang.code)"
+              :class="['btn btn-link language-flag', { active: locale === lang.code }]"
+              :title="lang.name"
+            >
+              <span :class="`fi fi-${lang.flagCode}`"></span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </nav>
-  
-  <!-- Spacer para compensar o navbar fixo -->
   <div class="navbar-spacer"></div>
 </template>
 

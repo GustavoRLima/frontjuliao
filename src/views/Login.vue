@@ -2,9 +2,12 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { authService } from '@/services/auth.service'
 
 const { t } = useI18n()
 const router = useRouter()
+const authStore = useAuthStore()
 
 // Tipo de login: 'athlete' ou 'team'
 const loginType = ref<'athlete' | 'team'>('athlete')
@@ -12,7 +15,7 @@ const loginType = ref<'athlete' | 'team'>('athlete')
 // Dados do formulário
 const loginData = ref({
   username: '',
-  password: ''
+  senha: ''
 })
 
 // Estado de loading
@@ -23,7 +26,7 @@ const handleLogin = async () => {
   errorMessage.value = ''
   
   // Validação básica
-  if (!loginData.value.username || !loginData.value.password) {
+  if (!loginData.value.username || !loginData.value.senha) {
     errorMessage.value = t('login.fillAllFields')
     return
   }
@@ -31,18 +34,64 @@ const handleLogin = async () => {
   isLoading.value = true
   
   try {
-    // Aqui você vai adicionar a lógica de autenticação
-    console.log('Tipo de login:', loginType.value)
-    console.log('Dados:', loginData.value)
+    const credentials = {
+      login: loginData.value.username,
+      senha: loginData.value.senha
+    }
     
-    // Simulação de requisição (remover depois)
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    let response
     
-    // Após login bem-sucedido, redirecionar
-    // router.push('/')
+    // Chamar API baseado no tipo de login
+    if (loginType.value === 'athlete') {
+      response = await authService.loginCompetidor(credentials)
+      console.log(response.competidor);
+      // Armazenar dados de autenticação
+      if (response.competidor) {
+        authStore.setAuthData(
+          response.access_token,
+          response.token_type,
+          response.competidor,
+          'competidor'
+        )
+        console.log(authStore.accessToken);
+      }
+    } else {
+      response = await authService.loginEquipe(credentials)
+      
+      // Armazenar dados de autenticação
+      if (response.equipe) {
+        authStore.setAuthData(
+          response.access_token,
+          response.token_type,
+          response.equipe,
+          'equipe'
+        )
+      }
+    }
     
-  } catch (error) {
-    errorMessage.value = t('login.errorMessage')
+    // Redirecionar para a home após login bem-sucedido
+    router.push('/')
+    
+  } catch (error: any) {
+    console.error('Erro no login:', error)
+    
+    // Tratar diferentes tipos de erro
+    if (error.response) {
+      // Erro da API
+      if (error.response.status === 401) {
+        errorMessage.value = t('login.invalidCredentials')
+      } else if (error.response.status === 422) {
+        errorMessage.value = t('login.validationError')
+      } else {
+        errorMessage.value = t('login.errorMessage')
+      }
+    } else if (error.request) {
+      // Erro de rede
+      errorMessage.value = t('login.networkError')
+    } else {
+      // Outro erro
+      errorMessage.value = t('login.errorMessage')
+    }
   } finally {
     isLoading.value = false
   }
@@ -53,7 +102,7 @@ const toggleLoginType = (type: 'athlete' | 'team') => {
   errorMessage.value = ''
   loginData.value = {
     username: '',
-    password: ''
+    senha: ''
   }
 }
 </script>
@@ -120,15 +169,15 @@ const toggleLoginType = (type: 'athlete' | 'team') => {
               
               <!-- Campo de Senha -->
               <div class="mb-3">
-                <label for="password" class="form-label">
+                <label for="senha" class="form-label">
                   <i class="bi bi-lock me-1"></i>
                   {{ t('login.password') }}
                 </label>
                 <input
                   type="password"
                   class="form-control"
-                  id="password"
-                  v-model="loginData.password"
+                  id="senha"
+                  v-model="loginData.senha"
                   :placeholder="t('login.passwordPlaceholder')"
                   required
                 >

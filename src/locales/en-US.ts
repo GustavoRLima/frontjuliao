@@ -139,7 +139,19 @@ export default {
     noAccount: "Don't have an account?",
     registerHere: 'Register here',
     fillAllFields: 'Please fill in all fields',
-    errorMessage: 'Login error. Please check your credentials.'
+    errorMessage: 'Login error. Please check your credentials.',
+    invalidCredentials: 'Invalid username or password',
+    validationError: 'Invalid data. Please check the fields',
+    networkError: 'Connection error. Check your internet'
+  },
+  common: {
+    athlete: 'Athlete',
+    team: 'Team'
+  },
+  user: {
+    editProfile: 'Edit Profile',
+    logout: 'Logout',
+    loggingOut: 'Logging out...'
   },
   footer: {
     copyright: 'Copyright © 2022 CBJJI. All rights reserved.',

@@ -139,7 +139,19 @@ export default {
     noAccount: '还没有账号？',
     registerHere: '在此注册',
     fillAllFields: '请填写所有字段',
-    errorMessage: '登录错误。请检查您的凭据。'
+    errorMessage: '登录错误。请检查您的凭据。',
+    invalidCredentials: '用户名或密码无效',
+    validationError: '数据无效。请检查字段',
+    networkError: '连接错误。请检查您的网络'
+  },
+  common: {
+    athlete: '运动员',
+    team: '团队'
+  },
+  user: {
+    editProfile: '编辑个人资料',
+    logout: '退出',
+    loggingOut: '退出中...'
   },
   footer: {
     copyright: 'Copyright © 2022 CBJJI. 保留所有权利。',
