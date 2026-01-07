@@ -139,7 +139,19 @@ export default {
     noAccount: 'Non hai un account?',
     registerHere: 'Registrati qui',
     fillAllFields: 'Si prega di compilare tutti i campi',
-    errorMessage: 'Errore di accesso. Verifica le tue credenziali.'
+    errorMessage: 'Errore di accesso. Verifica le tue credenziali.',
+    invalidCredentials: 'Nome utente o password non validi',
+    validationError: 'Dati non validi. Controlla i campi',
+    networkError: 'Errore di connessione. Controlla la tua connessione internet'
+  },
+  common: {
+    athlete: 'Atleta',
+    team: 'Squadra'
+  },
+  user: {
+    editProfile: 'Modifica Profilo',
+    logout: 'Disconnetti',
+    loggingOut: 'Disconnessione...'
   },
   footer: {
     copyright: 'Copyright © 2022 CBJJI. Tutti i diritti riservati.',

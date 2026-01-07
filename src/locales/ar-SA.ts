@@ -139,7 +139,19 @@ export default {
     noAccount: 'ليس لديك حساب؟',
     registerHere: 'سجل هنا',
     fillAllFields: 'يرجى ملء جميع الحقول',
-    errorMessage: 'خطأ في تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.'
+    errorMessage: 'خطأ في تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.',
+    invalidCredentials: 'اسم المستخدم أو كلمة المرور غير صحيحة',
+    validationError: 'بيانات غير صالحة. يرجى التحقق من الحقول',
+    networkError: 'خطأ في الاتصال. تحقق من الإنترنت الخاص بك'
+  },
+  common: {
+    athlete: 'رياضي',
+    team: 'فريق'
+  },
+  user: {
+    editProfile: 'تعديل الملف الشخصي',
+    logout: 'تسجيل الخروج',
+    loggingOut: 'جاري تسجيل الخروج...'
   },
   footer: {
     copyright: 'Copyright © 2022 CBJJI. جميع الحقوق محفوظة.',

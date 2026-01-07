@@ -139,7 +139,19 @@ export default {
     noAccount: 'Haben Sie kein Konto?',
     registerHere: 'Hier registrieren',
     fillAllFields: 'Bitte füllen Sie alle Felder aus',
-    errorMessage: 'Anmeldefehler. Bitte überprüfen Sie Ihre Zugangsdaten.'
+    errorMessage: 'Anmeldefehler. Bitte überprüfen Sie Ihre Zugangsdaten.',
+    invalidCredentials: 'Ungültiger Benutzername oder Passwort',
+    validationError: 'Ungültige Daten. Bitte überprüfen Sie die Felder',
+    networkError: 'Verbindungsfehler. Überprüfen Sie Ihre Internetverbindung'
+  },
+  common: {
+    athlete: 'Athlet',
+    team: 'Mannschaft'
+  },
+  user: {
+    editProfile: 'Profil Bearbeiten',
+    logout: 'Abmelden',
+    loggingOut: 'Abmelden...'
   },
   footer: {
     copyright: 'Copyright © 2022 CBJJI. Alle Rechte vorbehalten.',
