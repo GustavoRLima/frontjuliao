@@ -47,6 +47,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isCompetidor = computed(() => userType.value === 'competidor')
   const isEquipe = computed(() => userType.value === 'equipe')
+  
+  const token = computed(() => accessToken.value)
 
   // Actions
   function setAuthData(
@@ -97,6 +99,7 @@ export const useAuthStore = defineStore('auth', () => {
     userEmail,
     isCompetidor,
     isEquipe,
+    token,
     // Actions
     setAuthData,
     clearAuthData,

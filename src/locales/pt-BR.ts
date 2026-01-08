@@ -27,6 +27,7 @@ export default {
   },
   athlete: {
     title: 'Cadastro de Atleta',
+    editTitle: 'Editar Perfil de Atleta',
     personalInfo: 'Informações Pessoais',
     name: 'Nome',
     email: 'E-mail',
@@ -44,6 +45,8 @@ export default {
     password: 'Senha',
     confirmPassword: 'Confirmar Senha',
     passwordMismatch: 'As senhas não conferem',
+    passwordOptional: 'Deixe em branco para não alterar',
+    passwordEditHint: 'Preencha apenas se desejar alterar a senha',
     address: 'Endereço',
     cep: 'CEP',
     street: 'Rua',
@@ -66,6 +69,7 @@ export default {
     graduationDocHint: 'Envie o certificado ou documento de graduação',
     cancel: 'Cancelar',
     submit: 'Cadastrar',
+    update: 'Atualizar',
     successMessage: 'Cadastro realizado com sucesso!',
     faixa: 'Faixa',
     selectFaixa: 'Selecione a faixa',
@@ -82,6 +86,7 @@ export default {
   },
   team: {
     title: 'Cadastro de Equipe',
+    editTitle: 'Editar Perfil de Equipe',
     basicInfo: 'Informações Básicas',
     name: 'Nome da Equipe',
     email: 'E-mail',
@@ -90,6 +95,8 @@ export default {
     password: 'Senha',
     confirmPassword: 'Confirmar Senha',
     passwordMismatch: 'As senhas não conferem',
+    passwordOptional: 'Deixe em branco para não alterar',
+    passwordEditHint: 'Preencha apenas se desejar alterar a senha',
     address: 'Endereço',
     cep: 'CEP',
     street: 'Rua',
@@ -119,6 +126,7 @@ export default {
     documentHint: 'Envie o documento de registro da equipe',
     cancel: 'Cancelar',
     submit: 'Cadastrar',
+    update: 'Atualizar',
     successMessage: 'Cadastro realizado com sucesso!'
   },
   login: {

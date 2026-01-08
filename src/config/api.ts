@@ -19,6 +19,12 @@ export const API_ENDPOINTS = {
   logoutCompetidor: `${API_BASE_URL}/api/competidor/logout`,
   logoutEquipe: `${API_BASE_URL}/api/equipe/logout`,
   
+  // Perfil
+  getCompetidorProfile: `${API_BASE_URL}/api/competidor/me`,
+  getEquipeProfile: `${API_BASE_URL}/api/equipe/me`,
+  editCompetidor: `${API_BASE_URL}/api/competidor/edit`,
+  editEquipe: `${API_BASE_URL}/api/equipe/edit`,
+  
   // Outros
   getEquipes: `${API_BASE_URL}/api/get-equipes`,
   // Adicione outros endpoints aqui conforme necessário
