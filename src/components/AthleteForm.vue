@@ -467,7 +467,7 @@ const handleCancel = () => {
           <span v-if="!isEditMode" class="text-danger">*</span>
         </label>
         <input id="graduationDoc" type="file" class="form-control" accept="image/*,application/pdf"
-          @change="handleGraduationDocUpload" :required="!isEditMode" />
+          @change="handleGraduationDocUpload" :required="!isEditMode && formData.faixa != 'branca'" />
         <small class="text-muted">{{ t('athlete.graduationDocHint') }}</small>
         <div v-if="graduationDocName" class="mt-2">
           <span class="badge bg-info">{{ graduationDocName }}</span>
