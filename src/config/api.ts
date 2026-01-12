@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
   
   // Outros
   getEquipes: `${API_BASE_URL}/api/get-equipes`,
+  getCompeticoes: `${API_BASE_URL}/api/get-competicoes`,
   // Adicione outros endpoints aqui conforme necessário
 }
 

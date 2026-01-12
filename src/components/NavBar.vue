@@ -58,7 +58,7 @@ const changeLanguage = (langCode: string) => {
           </li>
           
           <li class="nav-item">
-            <a class="nav-link" href="#campeonatos">{{ t('nav.championships') }}</a>
+            <router-link class="nav-link" active-class="active" to="/competicoes">{{ t('nav.championships') }}</router-link>
           </li>
           
           <li class="nav-item">

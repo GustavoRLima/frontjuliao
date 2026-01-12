@@ -146,7 +146,29 @@ export default {
   },
   common: {
     athlete: 'رياضي',
-    team: 'فريق'
+    team: 'فريق',
+    loading: 'جاري التحميل',
+    ok: 'موافق',
+    previous: 'السابق',
+    next: 'التالي'
+  },
+  competition: {
+    title: 'المسابقات',
+    image: 'صورة',
+    description: 'وصف',
+    date: 'التاريخ',
+    location: 'الموقع',
+    actions: 'الإجراءات',
+    edit: 'تعديل المسابقة',
+    inscricao: 'سجل الآن',
+    view: 'عرض التفاصيل',
+    noCompetitions: 'لم يتم العثور على مسابقات',
+    errorTitle: 'خطأ',
+    errorMessage: 'تعذر تحميل المسابقات',
+    showing: 'عرض',
+    to: 'إلى',
+    of: 'من',
+    results: 'النتائج'
   },
   user: {
     editProfile: 'تعديل الملف الشخصي',

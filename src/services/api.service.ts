@@ -109,5 +109,23 @@ export const equipeService = {
   }
 }
 
+// Serviços de Competições
+export const competicaoService = {
+  /**
+   * Buscar competições com paginação
+   */
+  async getCompeticoes(page: number = 1) {
+    try {
+      const response = await api.get('/api/get-competicoes', {
+        params: { page }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Erro ao buscar competições:', error.response?.data || error.message)
+      throw error
+    }
+  }
+}
+
 export default api
 

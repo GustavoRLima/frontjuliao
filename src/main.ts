@@ -18,7 +18,12 @@ import {
   faUsers, 
   faChevronDown,
   faPenToSquare,
-  faRightFromBracket
+  faRightFromBracket,
+  faUserPlus,
+  faEye,
+  faChevronLeft,
+  faChevronRight,
+  faTrophy
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -27,7 +32,12 @@ library.add(
   faUsers, 
   faChevronDown,
   faPenToSquare,
-  faRightFromBracket
+  faRightFromBracket,
+  faUserPlus,
+  faEye,
+  faChevronLeft,
+  faChevronRight,
+  faTrophy
 )
 
 const app = createApp(App)

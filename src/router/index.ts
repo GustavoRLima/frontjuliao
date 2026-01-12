@@ -6,6 +6,7 @@ import TeamRegistration from '../views/TeamRegistration.vue'
 import Login from '../views/Login.vue'
 import AthleteEdit from '../views/AthleteEdit.vue'
 import TeamEdit from '../views/TeamEdit.vue'
+import CompetitionListView from '../views/CompetitionListView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,6 +43,11 @@ const router = createRouter({
       name: 'team-edit',
       component: TeamEdit,
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/competicoes',
+      name: 'competitions',
+      component: CompetitionListView
     }
   ]
 })

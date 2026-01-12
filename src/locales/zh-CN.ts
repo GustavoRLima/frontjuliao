@@ -146,7 +146,29 @@ export default {
   },
   common: {
     athlete: '运动员',
-    team: '团队'
+    team: '团队',
+    loading: '加载中',
+    ok: '确定',
+    previous: '上一页',
+    next: '下一页'
+  },
+  competition: {
+    title: '比赛',
+    image: '图片',
+    description: '描述',
+    date: '日期',
+    location: '地点',
+    actions: '操作',
+    edit: '编辑比赛',
+    inscricao: '注册',
+    view: '查看详情',
+    noCompetitions: '未找到比赛',
+    errorTitle: '错误',
+    errorMessage: '无法加载比赛',
+    showing: '显示',
+    to: '到',
+    of: '共',
+    results: '结果'
   },
   user: {
     editProfile: '编辑个人资料',
