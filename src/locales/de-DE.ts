@@ -146,7 +146,29 @@ export default {
   },
   common: {
     athlete: 'Athlet',
-    team: 'Mannschaft'
+    team: 'Mannschaft',
+    loading: 'Wird geladen',
+    ok: 'Ok',
+    previous: 'Zurück',
+    next: 'Weiter'
+  },
+  competition: {
+    title: 'Wettbewerbe',
+    image: 'Bild',
+    description: 'Beschreibung',
+    date: 'Datum',
+    location: 'Ort',
+    actions: 'Aktionen',
+    edit: 'Wettbewerb bearbeiten',
+    inscricao: 'Anmelden',
+    view: 'Details anzeigen',
+    noCompetitions: 'Keine Wettbewerbe gefunden',
+    errorTitle: 'Fehler',
+    errorMessage: 'Wettbewerbe konnten nicht geladen werden',
+    showing: 'Anzeigen',
+    to: 'bis',
+    of: 'von',
+    results: 'Ergebnisse'
   },
   user: {
     editProfile: 'Profil Bearbeiten',

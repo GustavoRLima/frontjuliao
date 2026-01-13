@@ -146,7 +146,29 @@ export default {
   },
   common: {
     athlete: 'Atleta',
-    team: 'Equipo'
+    team: 'Equipo',
+    loading: 'Cargando',
+    ok: 'Ok',
+    previous: 'Anterior',
+    next: 'Siguiente'
+  },
+  competition: {
+    title: 'Competiciones',
+    image: 'Imagen',
+    description: 'Descripción',
+    date: 'Fecha',
+    location: 'Ubicación',
+    actions: 'Acciones',
+    edit: 'Editar competición',
+    inscricao: 'Inscríbete',
+    view: 'Ver detalles',
+    noCompetitions: 'No se encontraron competiciones',
+    errorTitle: 'Error',
+    errorMessage: 'No se pudieron cargar las competiciones',
+    showing: 'Mostrando',
+    to: 'a',
+    of: 'de',
+    results: 'resultados'
   },
   user: {
     editProfile: 'Editar Perfil',

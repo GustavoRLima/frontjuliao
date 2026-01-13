@@ -146,7 +146,29 @@ export default {
   },
   common: {
     athlete: 'Athlete',
-    team: 'Team'
+    team: 'Team',
+    loading: 'Loading',
+    ok: 'Ok',
+    previous: 'Previous',
+    next: 'Next'
+  },
+  competition: {
+    title: 'Competitions',
+    image: 'Image',
+    description: 'Description',
+    date: 'Date',
+    location: 'Location',
+    actions: 'Actions',
+    edit: 'Edit competition',
+    inscricao: 'Sign up',
+    view: 'View details',
+    noCompetitions: 'No competitions found',
+    errorTitle: 'Error',
+    errorMessage: 'Unable to load competitions',
+    showing: 'Showing',
+    to: 'to',
+    of: 'of',
+    results: 'results'
   },
   user: {
     editProfile: 'Edit Profile',
