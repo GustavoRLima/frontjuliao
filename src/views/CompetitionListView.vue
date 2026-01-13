@@ -1,33 +1,49 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import CompetitionList from '@/components/CompetitionList.vue'
-import { onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import Swal from 'sweetalert2'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 /**
- * Navegar para página de edição
+ * Navegar para página de inscrição
  */
-const handleEdit = (id: number) => {
-  console.log('Editar competição:', id)
-  // TODO: Implementar navegação para página de edição
-  // router.push({ name: 'competition-edit', params: { id } })
+const handleInscricao = (id: number) => {
+  // Verificar se está autenticado
+  if (!authStore.isAuthenticated) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Autenticação Necessária',
+      text: 'Você precisa estar logado para se inscrever em uma competição.',
+      confirmButtonText: 'Ir para Login',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push({ name: 'login' })
+      }
+    })
+    return
+  }
+
+  // Redirecionar para página de inscrição
+  router.push({ name: 'competition-inscription', params: { id } })
 }
 
 /**
  * Navegar para página de visualização
  */
 const handleView = (id: number) => {
-  console.log('Visualizar competição:', id)
-  // TODO: Implementar navegação para página de visualização
-  // router.push({ name: 'competition-view', params: { id } })
+  router.push({ name: 'competition-detail', params: { id } })
 }
 </script>
 
 <template>
   <div class="container-fluid py-4">
     <CompetitionList 
-      @edit="handleEdit"
+      @edit="handleInscricao"
       @view="handleView"
     />
   </div>

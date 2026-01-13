@@ -132,7 +132,7 @@ const handleImageError = (event: Event) => {
 /**
  * Emitir evento de edição
  */
-const handleEdit = (id: number) => {
+const handleInscricao = (id: number) => {
   emit('edit', id)
 }
 
@@ -220,7 +220,7 @@ onMounted(() => {
                   type="button"
                   class="btn btn-sm btn-success tooltip-btn"
                   :data-tooltip="t('competition.inscricao')"
-                  @click="handleEdit(competicao.id)"
+                  @click="handleInscricao(competicao.id)"
                 >
                   <font-awesome-icon :icon="['fas', 'user-plus']" />
                 </button>

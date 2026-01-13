@@ -23,7 +23,26 @@ import {
   faEye,
   faChevronLeft,
   faChevronRight,
-  faTrophy
+  faTrophy,
+  faInfoCircle,
+  faCalendar,
+  faMapMarkerAlt,
+  faClock,
+  faTicketAlt,
+  faLayerGroup,
+  faMoneyBillWave,
+  faHandsHelping,
+  faFileContract,
+  faWeight,
+  faPlusCircle,
+  faArrowLeft,
+  faExclamationTriangle,
+  faExternalLinkAlt,
+  faDownload,
+  faUser,
+  faTrash,
+  faPlus,
+  faCheck
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -37,7 +56,26 @@ library.add(
   faEye,
   faChevronLeft,
   faChevronRight,
-  faTrophy
+  faTrophy,
+  faInfoCircle,
+  faCalendar,
+  faMapMarkerAlt,
+  faClock,
+  faTicketAlt,
+  faLayerGroup,
+  faMoneyBillWave,
+  faHandsHelping,
+  faFileContract,
+  faWeight,
+  faPlusCircle,
+  faArrowLeft,
+  faExclamationTriangle,
+  faExternalLinkAlt,
+  faDownload,
+  faUser,
+  faTrash,
+  faPlus,
+  faCheck
 )
 
 const app = createApp(App)
