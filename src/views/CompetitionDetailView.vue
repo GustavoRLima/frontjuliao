@@ -36,6 +36,7 @@ interface Competition {
   regulamento?: string
   tabela_pesos?: string
   mais_informacoes?: string
+  resultado_geral_url?: string
   [key: string]: any
 }
 
@@ -56,7 +57,8 @@ const tabs = [
   { id: 'organizacao_apoio', label: 'Organização e Apoio', icon: 'hands-helping' },
   { id: 'regulamento', label: 'Regulamento', icon: 'file-contract' },
   { id: 'tabela_pesos', label: 'Tabela de Pesos', icon: 'weight' },
-  { id: 'mais_informacoes', label: 'Mais Informações', icon: 'plus-circle' }
+  { id: 'mais_informacoes', label: 'Mais Informações', icon: 'plus-circle' },
+  { id: 'resultado_geral', label: 'Resultado geral', icon: 'circle-check' }
 ]
 
 /**
@@ -435,7 +437,7 @@ onMounted(() => {
                 <!-- Se for imagem -->
                 <img
                   v-else
-                  :src="getFileUrl(competition.tabela_pesos_tipo)"
+                  :src="getFileUrl(competition.tabela_pesos_url)"
                   alt="Tabela de Pesos"
                   class="tabela-image"
                   @error="handleImageError"
@@ -453,6 +455,27 @@ onMounted(() => {
             </h3>
             <div class="content-box">
               <div v-html="competition.mais_informacoes || 'Nenhuma informação adicional disponível.'"></div>
+            </div>
+          </div>
+
+          <div v-if="activeTab === 'resultado_geral'" class="tab-pane">
+            <h3>
+              <font-awesome-icon :icon="['fas', 'weight']" />
+              Resultado Geral
+            </h3>
+            <div class="content-box">
+              <div v-if="competition.resultado_geral_url">
+                <!-- Se for PDF -->
+                <div v-if="isPDF(competition.resultado_geral_url)" class="pdf-container">
+                  <iframe
+                    :src="getFileUrl(competition.resultado_geral_url)"
+                    class="pdf-viewer"
+                    frameborder="0"
+                    title="Resultado geral"
+                  ></iframe>
+                </div>
+              </div>
+              <p v-else class="text-muted">Ainda não há resultado geral disponível</p>
             </div>
           </div>
         </div>
