@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
@@ -40,9 +40,37 @@ interface Competition {
   [key: string]: any
 }
 
+interface Inscricao {
+  id: number
+  competidor_id: number
+  competidor_nome: string
+  categoria_id: number
+  categoria_nome: string
+  [key: string]: any
+}
+
+interface Categoria {
+  id: number
+  nome: string
+  faixa: string
+  qtd_competidores: number
+  sexo: string
+  idade_inicio: number
+  idade_fim: number
+  peso_categoria: string
+  [key: string]: any
+}
+
 const competition = ref<Competition | null>(null)
 const loading = ref(false)
 const activeTab = ref('informacoes_gerais')
+const showInscricoesModal = ref(false)
+const inscricoes = ref<Inscricao[]>([])
+const loadingInscricoes = ref(false)
+const categorias = ref<Categoria[]>([])
+const loadingCategorias = ref(false)
+const searchCategoria = ref('')
+const searchCategoriaTimeout = ref<number | null>(null)
 
 const tabs = [
   { id: 'informacoes_gerais', label: 'Informações Gerais', icon: 'info-circle' },
@@ -50,6 +78,7 @@ const tabs = [
   { id: 'endereco', label: 'Endereço', icon: 'map-marker-alt' },
   { id: 'quem_pode_competir', label: 'Quem Pode Competir', icon: 'users' },
   { id: 'cronograma', label: 'Cronograma', icon: 'clock' },
+  { id: 'chaveamento', label: 'Chaveamento', icon: 'key' },
   { id: 'ingressos', label: 'Ingressos', icon: 'ticket-alt' },
   { id: 'premiacao', label: 'Premiação', icon: 'trophy' },
   { id: 'agrupamento', label: 'Agrupamento', icon: 'layer-group' },
@@ -72,7 +101,6 @@ const fetchCompetition = async () => {
     
     if (response.data) {
       competition.value = response.data
-      console.log(competition.value)
     }
   } catch (error: any) {
     console.error('Erro ao buscar competição:', error)
@@ -187,6 +215,206 @@ const handleImageError = (event: Event) => {
   target.src = '/img/default-competition.svg'
 }
 
+/**
+ * Abrir modal de inscrições
+ */
+const abrirMinhasInscricoes = async () => {
+  if (!authStore.isAuthenticated) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Autenticação Necessária',
+      text: 'Você precisa estar logado para ver suas inscrições.',
+      confirmButtonText: 'OK'
+    })
+    return
+  }
+
+  showInscricoesModal.value = true
+  await buscarInscricoes()
+}
+
+/**
+ * Buscar inscrições
+ */
+const buscarInscricoes = async () => {
+  if (!competition.value) return
+
+  loadingInscricoes.value = true
+  try {
+    let response
+    if (authStore.isEquipe) {
+      response = await competicaoService.getInscricoesEquipe(competition.value.id)
+    } else {
+      response = await competicaoService.getInscricoesCompetidor(competition.value.id)
+    }
+    
+    if (response.data && response.data.inscricoes) {
+      inscricoes.value = response.data.inscricoes
+    } else {
+      inscricoes.value = []
+    }
+  } catch (error: any) {
+    console.error('Erro ao buscar inscrições:', error)
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: error.response?.data?.message || 'Erro ao buscar inscrições.',
+      confirmButtonText: 'OK'
+    })
+  } finally {
+    loadingInscricoes.value = false
+  }
+}
+
+/**
+ * Remover inscrição
+ */
+const removerInscricao = async (inscricao: Inscricao) => {
+  if (!competition.value) return
+
+  const result = await Swal.fire({
+    icon: 'warning',
+    title: 'Confirmar Remoção',
+    html: `Deseja realmente remover a inscrição de <strong>${inscricao.competidor_nome}</strong> na categoria <strong>${inscricao.categoria_nome}</strong>?`,
+    showCancelButton: true,
+    confirmButtonText: 'Sim, remover',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6'
+  })
+
+  if (!result.isConfirmed) return
+
+  try {
+    const data = {
+      competicao_id: competition.value.id,
+      competidor_id: inscricao.competidor_id,
+      categoria_id: inscricao.categoria_id
+    }
+
+    if (authStore.isEquipe) {
+      await competicaoService.removerInscricaoEquipe(data)
+    } else {
+      await competicaoService.removerInscricaoCompetidor(data)
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Sucesso!',
+      text: 'Inscrição removida com sucesso!',
+      confirmButtonText: 'OK'
+    })
+
+    // Atualizar lista
+    await buscarInscricoes()
+  } catch (error: any) {
+    console.error('Erro ao remover inscrição:', error)
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: error.response?.data?.message || 'Erro ao remover inscrição.',
+      confirmButtonText: 'OK'
+    })
+  }
+}
+
+/**
+ * Fechar modal
+ */
+const fecharModal = () => {
+  showInscricoesModal.value = false
+}
+
+/**
+ * Ir para lista de todos os inscritos
+ */
+const verTodosInscritos = () => {
+  router.push({ name: 'competition-inscriptions-list', params: { id: competition.value?.id } })
+}
+
+/**
+ * Buscar categorias do chaveamento
+ */
+const buscarCategorias = async (search?: string) => {
+  if (!competition.value) return
+
+  loadingCategorias.value = true
+  try {
+    const response = await competicaoService.getChaveamento(
+      competition.value.id,
+      search
+    )
+    
+    if (response.data) {
+      categorias.value = response.data
+    } else {
+      categorias.value = []
+    }
+  } catch (error: any) {
+    console.error('Erro ao buscar categorias:', error)
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: error.response?.data?.message || 'Erro ao buscar categorias.',
+      confirmButtonText: 'OK'
+    })
+  } finally {
+    loadingCategorias.value = false
+  }
+}
+
+/**
+ * Buscar categoria com debounce
+ */
+const handleSearchCategoria = () => {
+  if (searchCategoriaTimeout.value) {
+    clearTimeout(searchCategoriaTimeout.value)
+  }
+
+  searchCategoriaTimeout.value = window.setTimeout(() => {
+    buscarCategorias(searchCategoria.value || undefined)
+  }, 500)
+}
+
+/**
+ * Limpar busca de categoria
+ */
+const clearSearchCategoria = () => {
+  searchCategoria.value = ''
+  buscarCategorias()
+}
+
+/**
+ * Ver chaveamento de uma categoria
+ */
+const verChaveamento = (categoria: Categoria) => {
+  // TODO: Implementar visualização do chaveamento
+  console.log('Ver chaveamento da categoria:', categoria)
+  Swal.fire({
+    icon: 'info',
+    title: 'Chaveamento',
+    text: `Visualizar chaveamento da categoria: ${categoria.nome}`,
+    confirmButtonText: 'OK'
+  })
+}
+
+/**
+ * Dividir faixas por separador '-'
+ */
+const getFaixas = (faixa: string): string[] => {
+  if (!faixa) return []
+  return faixa.split('-').map(f => f.trim()).filter(f => f)
+}
+
+/**
+ * Watch para quando mudar para a aba de chaveamento
+ */
+watch(activeTab, (newTab) => {
+  if (newTab === 'chaveamento' && categorias.value.length === 0 && !loadingCategorias.value) {
+    buscarCategorias()
+  }
+})
+
 onMounted(() => {
   fetchCompetition()
 })
@@ -231,10 +459,97 @@ onMounted(() => {
           {{ formatDate(competition.data_evento) }}
         </p>
         <div class="inscription-actions">
-          <button class="btn btn-success btn-lg" @click="goToInscricao">
+          <button class="btn btn-success btn-lg" @click="goToInscricao" v-if="new Date(competition.data_evento) > new Date()">
             <font-awesome-icon :icon="['fas', 'user-plus']" />
             Inscrever-se
           </button>
+          <button 
+            v-if="authStore.isAuthenticated && new Date(competition.data_evento) > new Date()" 
+            class="btn btn-primary btn-lg" 
+            @click="abrirMinhasInscricoes"
+          >
+            <font-awesome-icon :icon="['fas', 'list']" />
+            {{ authStore.isEquipe ? 'Inscrições da Equipe' : 'Minhas Inscrições' }}
+          </button>
+          <button 
+            class="btn btn-info btn-lg" 
+            @click="verTodosInscritos"
+          >
+            <font-awesome-icon :icon="['fas', 'users']" />
+            Inscrições
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal de Inscrições -->
+      <div v-if="showInscricoesModal" class="modal-overlay" @click="fecharModal">
+        <div class="modal-content" @click.stop>
+          <div class="modal-header">
+            <h3>
+              <font-awesome-icon :icon="['fas', 'list']" />
+              {{ authStore.isEquipe ? 'Inscrições da Equipe' : 'Minhas Inscrições' }}
+            </h3>
+            <button class="btn-close" @click="fecharModal">
+              <font-awesome-icon :icon="['fas', 'times']" />
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <!-- Loading -->
+            <div v-if="loadingInscricoes" class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+              </div>
+              <p class="mt-2">Carregando inscrições...</p>
+            </div>
+
+            <!-- Sem inscrições -->
+            <div v-else-if="inscricoes.length === 0" class="text-center py-4">
+              <font-awesome-icon :icon="['fas', 'info-circle']" class="fa-3x text-muted mb-3" />
+              <p class="text-muted">Nenhuma inscrição encontrada nesta competição.</p>
+              <button class="btn btn-success mt-3" @click="goToInscricao">
+                <font-awesome-icon :icon="['fas', 'user-plus']" />
+                Fazer Inscrição
+              </button>
+            </div>
+
+            <!-- Lista de inscrições -->
+            <div v-else>
+              <div class="inscricoes-table">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Atleta</th>
+                      <th>Categoria</th>
+                      <th class="text-center">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="inscricao in inscricoes" :key="`${inscricao.competidor_id}-${inscricao.categoria_id}`">
+                      <td>{{ inscricao.competidor_nome }}</td>
+                      <td>{{ inscricao.categoria_nome }}</td>
+                      <td class="text-center">
+                        <button 
+                          class="btn btn-sm btn-danger"
+                          @click="removerInscricao(inscricao)"
+                        >
+                          <font-awesome-icon :icon="['fas', 'trash']" />
+                          Remover
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="modal-footer-actions mt-3">
+                <button class="btn btn-success" @click="goToInscricao">
+                  <font-awesome-icon :icon="['fas', 'user-plus']" />
+                  Nova Inscrição
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -330,6 +645,110 @@ onMounted(() => {
             </h3>
             <div class="content-box">
               <div v-html="competition.cronograma || 'Nenhum cronograma disponível.'"></div>
+            </div>
+          </div>
+
+          <!-- Chaveamento -->
+          <div v-if="activeTab === 'chaveamento'" class="tab-pane">
+            <h3>
+              <font-awesome-icon :icon="['fas', 'key']" />
+              Chaveamento
+            </h3>
+
+            <!-- Filtro de Busca -->
+            <div class="search-box-categoria mb-3">
+              <div class="input-group">
+                <span class="input-group-text">
+                  <font-awesome-icon :icon="['fas', 'search']" />
+                </span>
+                <input
+                  v-model="searchCategoria"
+                  type="text"
+                  class="form-control"
+                  placeholder="Buscar categoria..."
+                  @input="handleSearchCategoria"
+                >
+                <button 
+                  v-if="searchCategoria" 
+                  class="btn btn-outline-secondary"
+                  @click="clearSearchCategoria"
+                >
+                  <font-awesome-icon :icon="['fas', 'times']" />
+                  Limpar
+                </button>
+              </div>
+            </div>
+
+            <div class="content-box">
+              <!-- Loading -->
+              <div v-if="loadingCategorias" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="mt-2">Carregando categorias...</p>
+              </div>
+
+              <!-- Tabela de Categorias -->
+              <div v-else-if="categorias.length > 0" class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Categoria</th>
+                      <th>Idade</th>
+                      <th>Sexo</th>
+                      <th>Faixa</th>
+                      <!-- <th>Peso</th>
+                      <th>Competidores</th> -->
+                      <th class="text-center">Ação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="categoria in categorias" :key="categoria.id">
+                      <td><strong>{{ categoria.nome }}</strong></td>
+                      <td>{{ categoria.idade_inicio }} - {{ categoria.idade_fim }} anos</td>
+                      <td>{{ categoria.sexo }}</td>
+                      <td>
+                        <div class="faixas-container">
+                          <span 
+                            v-for="(faixa, index) in getFaixas(categoria.faixa)" 
+                            :key="index"
+                            class="badge faixa-badge me-1" 
+                            :class="`faixa-${faixa.toLowerCase()}`"
+                            :title="categoria.faixa"
+                          >
+                            {{ faixa }}
+                          </span>
+                        </div>
+                      </td>
+                      <!-- <td>{{ categoria.peso_categoria }}</td>
+                      <td class="text-center">
+                        <span class="badge bg-primary">{{ categoria.qtd_competidores }}</span>
+                      </td> -->
+                      <td class="text-center">
+                        <button 
+                          class="btn btn-sm btn-success"
+                          @click="verChaveamento(categoria)"
+                        >
+                          <font-awesome-icon :icon="['fas', 'eye']" />
+                          Ver Chaveamento
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Sem Resultados -->
+              <div v-else class="text-center py-4">
+                <font-awesome-icon :icon="['fas', 'info-circle']" class="fa-3x text-muted mb-3" />
+                <p class="text-muted">
+                  {{ searchCategoria ? 'Nenhuma categoria encontrada.' : 'Nenhuma categoria disponível.' }}
+                </p>
+                <button v-if="searchCategoria" class="btn btn-primary" @click="clearSearchCategoria">
+                  <font-awesome-icon :icon="['fas', 'times']" />
+                  Limpar Filtro
+                </button>
+              </div>
             </div>
           </div>
 
@@ -460,7 +879,7 @@ onMounted(() => {
 
           <div v-if="activeTab === 'resultado_geral'" class="tab-pane">
             <h3>
-              <font-awesome-icon :icon="['fas', 'weight']" />
+              <font-awesome-icon :icon="['fas', 'circle-check']" />
               Resultado Geral
             </h3>
             <div class="content-box">
@@ -568,6 +987,188 @@ onMounted(() => {
   border-color: #004d11;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 101, 23, 0.4);
+}
+
+.inscription-actions .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.inscription-actions .btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+}
+
+.inscription-actions .btn-info {
+  background-color: #0dcaf0;
+  border-color: #0dcaf0;
+  color: #000;
+}
+
+.inscription-actions .btn-info:hover {
+  background-color: #31d2f2;
+  border-color: #25cff2;
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 202, 240, 0.4);
+}
+
+/* Modal de Inscrições */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 2px solid #e9ecef;
+  background-color: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  background-color: #e9ecef;
+  color: #2c3e50;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.inscricoes-table {
+  overflow-x: auto;
+}
+
+.inscricoes-table .table {
+  margin-bottom: 0;
+}
+
+.inscricoes-table thead th {
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+  padding: 1rem;
+}
+
+.inscricoes-table tbody td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.inscricoes-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.modal-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #e9ecef;
+}
+
+/* Responsivo Modal */
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 95%;
+    max-height: 95vh;
+  }
+
+  .modal-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .inscricoes-table {
+    font-size: 0.9rem;
+  }
+
+  .inscricoes-table thead th,
+  .inscricoes-table tbody td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .modal-footer-actions {
+    flex-direction: column;
+  }
+
+  .modal-footer-actions .btn {
+    width: 100%;
+  }
+
+  .inscription-actions {
+    flex-direction: column;
+  }
+
+  .inscription-actions .btn {
+    width: 100%;
+  }
 }
 
 .competition-content {
@@ -760,6 +1361,133 @@ onMounted(() => {
   height: 3rem;
 }
 
+/* Busca de Categoria */
+.search-box-categoria .input-group {
+  max-width: 600px;
+}
+
+.search-box-categoria .input-group-text {
+  background-color: #f8f9fa;
+  border-right: none;
+}
+
+.search-box-categoria .form-control {
+  border-left: none;
+  border-right: none;
+  padding: 0.75rem 1rem;
+}
+
+.search-box-categoria .form-control:focus {
+  border-color: #006517;
+  box-shadow: 0 0 0 0.2rem rgba(0, 101, 23, 0.25);
+}
+
+.search-box-categoria .btn-outline-secondary {
+  border-left: none;
+}
+
+/* Container de Faixas */
+.faixas-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+/* Badges de Faixa */
+.faixa-badge {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.faixa-badge:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.faixa-badge[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2c3e50;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.faixa-badge[title]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #2c3e50;
+  margin-bottom: 0.25rem;
+  z-index: 1000;
+}
+
+.faixa-branca {
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  border: 2px solid #dee2e6;
+}
+
+.faixa-cinza {
+  background-color: #6c757d;
+  color: white;
+}
+
+.faixa-amarela {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.faixa-laranja {
+  background-color: #fd7e14;
+  color: white;
+}
+
+.faixa-verde {
+  background-color: #28a745;
+  color: white;
+}
+
+.faixa-azul {
+  background-color: #007bff;
+  color: white;
+}
+
+.faixa-roxa {
+  background-color: #6f42c1;
+  color: white;
+}
+
+.faixa-marrom {
+  background-color: #795548;
+  color: white;
+}
+
+.faixa-preta {
+  background-color: #000000;
+  color: white;
+}
+
 /* Responsivo */
 @media (max-width: 992px) {
   .competition-content {
@@ -837,6 +1565,25 @@ onMounted(() => {
   .pdf-toolbar .btn {
     width: 100%;
   }
+}
+</style>
+
+<style>
+/* Estilos globais para SweetAlert - Sem scoped para garantir que funcione */
+body.swal2-shown > [aria-hidden="true"] {
+  filter: none !important;
+}
+
+.swal2-container {
+  z-index: 999999 !important;
+}
+
+.swal2-popup {
+  z-index: 1000000 !important;
+}
+
+.swal2-backdrop-show {
+  z-index: 999998 !important;
 }
 </style>
 

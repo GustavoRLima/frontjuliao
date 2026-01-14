@@ -186,6 +186,124 @@ export const competicaoService = {
       console.error('Erro ao criar inscrição:', error.response?.data || error.message)
       throw error
     }
+  },
+
+  /**
+   * Buscar inscrições do competidor na competição
+   */
+  async getInscricoesCompetidor(competicaoId: number) {
+    try {
+      const response = await api.get('/api/competidor/get-inscricoes', {
+        params: { competicao_id: competicaoId }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Erro ao buscar inscrições do competidor:', error.response?.data || error.message)
+      throw error
+    }
+  },
+
+  /**
+   * Buscar inscrições da equipe na competição
+   */
+  async getInscricoesEquipe(competicaoId: number) {
+    try {
+      const token = localStorage.getItem('access_token')
+      
+      if (!token) {
+        throw new Error('Token de autenticação não encontrado')
+      }
+
+      const response = await api.get('/api/equipe/get-inscricoes', {
+        params: { competicao_id: competicaoId },
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Erro ao buscar inscrições da equipe:', error.response?.data || error.message)
+      throw error
+    }
+  },
+
+  /**
+   * Remover inscrição do competidor
+   */
+  async removerInscricaoCompetidor(data: { competicao_id: number, competidor_id: number, categoria_id: number }) {
+    try {
+      const response = await api.post('/api/competidor/remover-inscricao', data)
+      return response.data
+    } catch (error: any) {
+      console.error('Erro ao remover inscrição do competidor:', error.response?.data || error.message)
+      throw error
+    }
+  },
+
+  /**
+   * Remover inscrição da equipe
+   */
+  async removerInscricaoEquipe(data: { competicao_id: number, competidor_id: number, categoria_id: number }) {
+    try {
+      const token = localStorage.getItem('access_token')
+      
+      if (!token) {
+        throw new Error('Token de autenticação não encontrado')
+      }
+
+      const response = await api.post('/api/equipe/remover-inscricao', data, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Erro ao remover inscrição da equipe:', error.response?.data || error.message)
+      throw error
+    }
+  },
+
+  /**
+   * Buscar todos os inscritos de uma competição (público)
+   */
+  async getTodosInscritos(competicaoId: number, page: number = 1, search?: string) {
+    try {
+      const params: any = { 
+        competicao_id: competicaoId,
+        page 
+      }
+      
+      if (search) {
+        params.search = search
+      }
+
+      const response = await api.get('/api/get-inscricoes', { params })
+      return response.data
+    } catch (error: any) {
+      console.error('Erro ao buscar todos os inscritos:', error.response?.data || error.message)
+      throw error
+    }
+  },
+
+  /**
+   * Buscar chaveamento da competição
+   */
+  async getChaveamento(competicaoId: number, search?: string) {
+    try {
+      const params: any = { 
+        competicao_id: competicaoId
+      }
+      
+      if (search) {
+        params.search = search
+      }
+
+      const response = await api.get('/api/get-chaveamento-competicao', { params })
+      return response.data
+    } catch (error: any) {
+      console.error('Erro ao buscar chaveamento:', error.response?.data || error.message)
+      throw error
+    }
   }
 }
 
