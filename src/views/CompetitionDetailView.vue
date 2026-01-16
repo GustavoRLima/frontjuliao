@@ -388,13 +388,15 @@ const clearSearchCategoria = () => {
  * Ver chaveamento de uma categoria
  */
 const verChaveamento = (categoria: Categoria) => {
-  // TODO: Implementar visualização do chaveamento
-  console.log('Ver chaveamento da categoria:', categoria)
-  Swal.fire({
-    icon: 'info',
-    title: 'Chaveamento',
-    text: `Visualizar chaveamento da categoria: ${categoria.nome}`,
-    confirmButtonText: 'OK'
+  if (!competition.value) return
+
+  router.push({
+    name: 'bracket',
+    params: {
+      competicaoId: competition.value.id,
+      categoriaId: categoria.id,
+      faixaId: categoria.faixa
+    }
   })
 }
 
@@ -697,8 +699,8 @@ onMounted(() => {
                       <th>Idade</th>
                       <th>Sexo</th>
                       <th>Faixa</th>
-                      <!-- <th>Peso</th>
-                      <th>Competidores</th> -->
+                      <th>Peso</th>
+                      <th>Qtd</th>
                       <th class="text-center">Ação</th>
                     </tr>
                   </thead>
@@ -720,12 +722,12 @@ onMounted(() => {
                           </span>
                         </div>
                       </td>
-                      <!-- <td>{{ categoria.peso_categoria }}</td>
+                      <td>{{ categoria.categoria }}</td>
                       <td class="text-center">
                         <span class="badge bg-primary">{{ categoria.qtd_competidores }}</span>
-                      </td> -->
+                      </td>
                       <td class="text-center">
-                        <button 
+                        <button  v-if="competition.chave_gerada"
                           class="btn btn-sm btn-success"
                           @click="verChaveamento(categoria)"
                         >

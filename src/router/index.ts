@@ -10,6 +10,7 @@ import CompetitionListView from '../views/CompetitionListView.vue'
 import CompetitionDetailView from '../views/CompetitionDetailView.vue'
 import CompetitionInscriptionView from '../views/CompetitionInscriptionView.vue'
 import CompetitionInscriptionsListView from '../views/CompetitionInscriptionsListView.vue'
+import BracketView from '../views/BracketView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,6 +68,11 @@ const router = createRouter({
       path: '/competicoes/:id/inscricoes',
       name: 'competition-inscriptions-list',
       component: CompetitionInscriptionsListView
+    },
+    {
+      path: '/competicoes/:competicaoId/chaveamento/:categoriaId/faixa/:faixaId',
+      name: 'bracket',
+      component: BracketView
     }
   ]
 })

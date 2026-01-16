@@ -304,6 +304,25 @@ export const competicaoService = {
       console.error('Erro ao buscar chaveamento:', error.response?.data || error.message)
       throw error
     }
+  },
+
+  /**
+   * Buscar chaveamento de uma categoria específica
+   */
+  async getChaveamentoCategoria(competicaoId: number, categoriaId: number, faixaId: string) {
+    try {
+      const response = await api.get('/api/get-chaveamento-categoria', {
+        params: {
+          competicao_id: competicaoId,
+          categoria_id: categoriaId,
+          faixa: faixaId
+        }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Erro ao buscar chaveamento da categoria:', error.response?.data || error.message)
+      throw error
+    }
   }
 }
 
