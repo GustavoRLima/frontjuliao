@@ -42,7 +42,12 @@ import {
   faUser,
   faTrash,
   faPlus,
-  faCheck
+  faCheck,
+  faCircleCheck,
+  faList,
+  faTimes,
+  faSearch,
+  faKey
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -75,7 +80,12 @@ library.add(
   faUser,
   faTrash,
   faPlus,
-  faCheck
+  faCheck,
+  faCircleCheck,
+  faList,
+  faTimes,
+  faSearch,
+  faKey
 )
 
 const app = createApp(App)
