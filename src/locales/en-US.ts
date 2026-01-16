@@ -23,7 +23,8 @@ export default {
     highlightsText: 'Discover some of the most remarkable moments and achievements of athletes and teams that are part of our platform',
     carousel1: 'Credential 1',
     carousel2: 'Credential 2',
-    carousel3: 'Credential 3'
+    carousel3: 'Credential 3',
+    partnersTitle: 'Our Partners'
   },
   athlete: {
     title: 'Athlete Registration',

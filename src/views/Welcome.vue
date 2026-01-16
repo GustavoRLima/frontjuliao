@@ -21,6 +21,24 @@ const carouselItems = [
     title: t('welcome.carousel3')
   }
 ]
+
+  // Parceiros - adicione aqui os logos dos seus parceiros
+  const partners = [
+    { id: 1, name: 'FPJJI', logo: '/img/fpjji-parceiro.jpeg', url: 'https://www.fpjji.com' },
+  // { id: 2, name: 'Parceiro 2', logo: '/img/parceiro2.png', url: 'https://www.parceiro2.com' },
+  // { id: 3, name: 'Parceiro 3', logo: '/img/parceiro3.png', url: 'https://www.parceiro3.com' },
+  // { id: 4, name: 'Parceiro 4', logo: '/img/parceiro4.png', url: 'https://www.parceiro4.com' },
+  // { id: 5, name: 'Parceiro 5', logo: '/img/parceiro5.png', url: 'https://www.parceiro5.com' },
+  // { id: 6, name: 'Parceiro 6', logo: '/img/parceiro6.png', url: 'https://www.parceiro6.com' },
+  // { id: 7, name: 'Parceiro 7', logo: '/img/parceiro7.png', url: 'https://www.parceiro7.com' },
+  // { id: 8, name: 'Parceiro 8', logo: '/img/parceiro8.png', url: 'https://www.parceiro8.com' }
+]
+
+// Agrupa os parceiros em grupos de 4 para o carrossel
+const partnersGrouped = []
+for (let i = 0; i < partners.length; i += 4) {
+  partnersGrouped.push(partners.slice(i, i + 4))
+}
 </script>
 
 <template>
@@ -175,6 +193,8 @@ const carouselItems = [
                   <!-- </div> -->
                 </div>
               </div>
+
+              
               
               <button class="carousel-control-prev" type="button" data-bs-target="#highlightsCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -182,6 +202,73 @@ const carouselItems = [
               </button>
               <button class="carousel-control-next" type="button" data-bs-target="#highlightsCarousel" data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Próximo</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção de Parceiros -->
+    <section class="partners-section py-5">
+      <div class="container px-4">
+        <h2 class="text-center mb-5 section-title">{{ t('welcome.partnersTitle') }}</h2>
+        
+        <div class="row justify-content-center">
+          <div class="col-12 col-lg-11 col-xl-10">
+            <div id="partnersCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-indicators">
+                <button 
+                  v-for="(group, index) in partnersGrouped" 
+                  :key="`indicator-${index}`"
+                  type="button" 
+                  data-bs-target="#partnersCarousel" 
+                  :data-bs-slide-to="index"
+                  :class="{ active: index === 0 }"
+                  :aria-current="index === 0 ? 'true' : 'false'"
+                  :aria-label="`Grupo ${index + 1}`"
+                ></button>
+              </div>
+              
+              <div class="carousel-inner">
+                <div 
+                  v-for="(group, groupIndex) in partnersGrouped" 
+                  :key="`group-${groupIndex}`"
+                  :class="['carousel-item', { active: groupIndex === 0 }]"
+                >
+                  <div class="row g-4 partners-grid">
+                    <div 
+                      v-for="partner in group" 
+                      :key="partner.id"
+                      class="col-6 col-md-3"
+                    >
+                      <a 
+                        :href="partner.url" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="partner-card"
+                      >
+                        <div class="partner-logo-wrapper">
+                          <img 
+                            :src="partner.logo" 
+                            :alt="partner.name"
+                            class="partner-logo img-fluid"
+                          >
+                        </div>
+                        <p class="partner-name text-center mt-3">{{ partner.name }}</p>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button class="carousel-control-prev" type="button" data-bs-target="#partnersCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon partners-control" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#partnersCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon partners-control" aria-hidden="true"></span>
                 <span class="visually-hidden">Próximo</span>
               </button>
             </div>
@@ -375,6 +462,78 @@ const carouselItems = [
   text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 
+/* Partners Section */
+.partners-section {
+  background-color: #ffffff;
+}
+
+.partners-grid {
+  padding: 2rem 0;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+}
+
+.partner-card {
+  display: block;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+  padding: 1rem;
+}
+
+.partner-card:hover {
+  transform: translateY(-5px);
+}
+
+.partner-logo-wrapper {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+}
+
+.partner-card:hover .partner-logo-wrapper {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.partner-logo {
+  max-width: 100%;
+  max-height: 120px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.partner-name {
+  color: #333;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+}
+
+.partners-control {
+  filter: invert(1);
+}
+
+#partnersCarousel .carousel-control-prev,
+#partnersCarousel .carousel-control-next {
+  width: 5%;
+}
+
+#partnersCarousel .carousel-indicators {
+  margin-bottom: -2rem;
+}
+
+#partnersCarousel .carousel-indicators button {
+  background-color: #006517;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .section-title {
@@ -409,6 +568,15 @@ const carouselItems = [
   .carousel-caption h5 {
     font-size: 1.25rem;
   }
+  
+  .partner-logo-wrapper {
+    min-height: 120px;
+    padding: 1rem;
+  }
+  
+  .partner-logo {
+    max-height: 100px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -434,6 +602,23 @@ const carouselItems = [
   
   .carousel-image {
     height: 200px;
+  }
+  
+  .partners-grid {
+    min-height: 200px;
+  }
+  
+  .partner-logo-wrapper {
+    min-height: 100px;
+    padding: 0.75rem;
+  }
+  
+  .partner-logo {
+    max-height: 80px;
+  }
+  
+  .partner-name {
+    font-size: 0.9rem;
   }
 }
 </style>

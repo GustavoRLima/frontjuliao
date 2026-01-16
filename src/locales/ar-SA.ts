@@ -23,7 +23,8 @@ export default {
     highlightsText: 'اكتشف بعض اللحظات الأكثر إثارة والإنجازات للرياضيين والفرق التي هي جزء من منصتنا',
     carousel1: 'بيانات اعتماد 1',
     carousel2: 'بيانات اعتماد 2',
-    carousel3: 'بيانات اعتماد 3'
+    carousel3: 'بيانات اعتماد 3',
+    partnersTitle: 'شركاؤنا'
   },
   athlete: {
     title: 'تسجيل رياضي',

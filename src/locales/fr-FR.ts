@@ -23,7 +23,8 @@ export default {
     highlightsText: 'Découvrez quelques-uns des moments les plus remarquables et des réalisations des athlètes et des équipes qui font partie de notre plateforme',
     carousel1: 'Accréditation 1',
     carousel2: 'Accréditation 2',
-    carousel3: 'Accréditation 3'
+    carousel3: 'Accréditation 3',
+    partnersTitle: 'Nos Partenaires'
   },
   athlete: {
     title: 'Inscription d\'Athlète',

@@ -57,7 +57,6 @@ const fetchInscritos = async (page: number = 1, search?: string) => {
             currentPage.value = paginationData.current_page
         }
       
-      console.log(response.data);
       if (response.data.competicao_nome) {
         competicaoNome.value = response.data.competicao_nome
       }

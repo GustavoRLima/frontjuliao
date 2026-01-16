@@ -532,12 +532,14 @@ onMounted(() => {
                       <td>{{ inscricao.categoria_nome }}</td>
                       <td class="text-center">
                         <button 
+                          v-if="!inscricao.pago"
                           class="btn btn-sm btn-danger"
                           @click="removerInscricao(inscricao)"
                         >
                           <font-awesome-icon :icon="['fas', 'trash']" />
                           Remover
                         </button>
+                        <badge class="badge bg-success" v-if="inscricao.pago">Pago</badge>
                       </td>
                     </tr>
                   </tbody>

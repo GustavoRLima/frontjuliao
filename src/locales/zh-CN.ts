@@ -23,7 +23,8 @@ export default {
     highlightsText: '了解一些最显著的时刻和成就，来自我们平台上的运动员和团队',
     carousel1: '凭证 1',
     carousel2: '凭证 2',
-    carousel3: '凭证 3'
+    carousel3: '凭证 3',
+    partnersTitle: '我们的合作伙伴'
   },
   athlete: {
     title: '运动员注册',

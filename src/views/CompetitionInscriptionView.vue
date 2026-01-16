@@ -28,6 +28,7 @@ interface Inscricao {
   categoria_nome?: string
   categorias_disponiveis?: Categoria[]
   loading_categorias?: boolean
+  pago?: boolean
 }
 
 const competicaoId = ref<number>(0)

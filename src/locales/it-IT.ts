@@ -23,7 +23,8 @@ export default {
     highlightsText: 'Scopri alcuni dei momenti più straordinari e dei risultati degli atleti e delle squadre che fanno parte della nostra piattaforma',
     carousel1: 'Credenziale 1',
     carousel2: 'Credenziale 2',
-    carousel3: 'Credenziale 3'
+    carousel3: 'Credenziale 3',
+    partnersTitle: 'I Nostri Partner'
   },
   athlete: {
     title: 'Registrazione Atleta',
